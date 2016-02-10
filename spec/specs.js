@@ -39,6 +39,42 @@ describe('Board', function() {
       expect(testBoard.find(1,2).coordinates).to.eql([1,2]);
     });
   });
+
+  describe('.spacesMarkedBy()', function() {
+    it('finds all of the spaces marked by a player', function() {
+      var testBoard = new Board();
+      var testPlayer = createXPlayer();
+      var testSpace = testBoard.find(0,0);
+      testSpace.markedBy(testPlayer);
+      expect(testBoard.spacesMarkedBy(testPlayer)).to.eql([testSpace]);
+    });
+  });
+
+  describe('.winner()', function() {
+    it('returns true when there are three contiguous \
+        spaces marked by the same player', function() {
+      var testBoard = new Board();
+      var testPlayer = createXPlayer();
+      testBoard.players.push(testPlayer);
+      testBoard.find(0,0).markedBy(testPlayer);
+      testBoard.find(1,1).markedBy(testPlayer);
+      testBoard.find(0,2).markedBy(testPlayer);
+      expect(testBoard.winner()).to.equal(false);
+      testBoard.find(0,1).markedBy(testPlayer);
+      expect(testBoard.winner()).to.equal(testPlayer);
+    });
+
+    it('returns true when there are three diagonal \
+        spaces marked by the same player', function() {
+      var testBoard = new Board();
+      var testPlayer = createXPlayer();
+      testBoard.players.push(testPlayer);
+      testBoard.find(0,0).markedBy(testPlayer);
+      testBoard.find(1,1).markedBy(testPlayer);
+      testBoard.find(2,2).markedBy(testPlayer);
+      expect(testBoard.winner()).to.equal(testPlayer);
+    });
+  });
 });
 
 var createXPlayer = function() {
