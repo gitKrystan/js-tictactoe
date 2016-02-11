@@ -1,0 +1,53 @@
+.game-status {
+  position: absolute;
+  z-index: 11;
+  text-align: center;
+  margin: 50px auto 30px auto;
+  width: 300px;
+}
+
+.game-board {
+  overflow: hidden;
+  margin: 50px auto 30px auto;
+  position: relative;
+  width: 300px;
+}
+@media (min-width: 450px) {
+  .game-board {
+    height: 450px;
+    width: 450px;
+  }
+}
+
+.space {
+  background-color: salmon;
+  border-radius: 10px;
+  color: #fff;
+  float: left;
+  font-size: 45px;
+  font-weight: 700;
+  height: 85px;
+  margin: 5px;
+  padding: 10px;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  width: 85px;
+  -moz-transition: background-color 0.3s;
+  -o-transition: background-color 0.3s;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+}
+
+@media (min-width: 450px) {
+  .space {
+    font-size: 70px;
+    height: 140px;
+    padding: 20px;
+    width: 140px;
+  }
+}
+
+.unmarked:hover {
+  cursor: pointer;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}

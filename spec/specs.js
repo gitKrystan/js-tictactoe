@@ -49,30 +49,51 @@ describe('Board', function() {
       expect(testBoard.spacesMarkedBy(testPlayer)).to.eql([testSpace]);
     });
   });
+});
 
-  describe('.winner()', function() {
+describe('Game', function() {
+  it('creates two players and a board', function() {
+    var testGame = new Game();
+    expect(testGame.board.spaces.length).to.equal(9);
+    expect(testGame.board.spaces[0].coordinates).to.eql([0,0]);
+    expect(testGame.board.spaces[8].coordinates).to.eql([2,2]);
+    expect(testGame.players.length).to.equal(2);
+    expect(testGame.players[0].mark).to.equal("X");
+    expect(testGame.players[1].mark).to.equal("O");
+  });
+
+  describe('.gameOver()', function() {
+    it('knows to move to the next turn if there are no winners', function() {
+      var testGame = new Game();
+      expect(testGame.gameOver()).to.equal(false);
+      testGame.board.find(0,0).markedBy(testGame.players[0]);
+      testGame.board.find(1,1).markedBy(testGame.players[0]);
+      testGame.board.find(2,2).markedBy(testGame.players[0]);
+      expect(testGame.gameOver()).to.equal(testGame.players[0]);
+    });
+
     it('returns true when there are three contiguous \
         spaces marked by the same player', function() {
-      var testBoard = new Board();
-      var testPlayer = createXPlayer();
-      testBoard.players.push(testPlayer);
+      var testGame = new Game();
+      var testBoard = testGame.board;
+      var testPlayer = testGame.players[0];
       testBoard.find(0,0).markedBy(testPlayer);
       testBoard.find(1,1).markedBy(testPlayer);
       testBoard.find(0,2).markedBy(testPlayer);
-      expect(testBoard.winner()).to.equal(false);
+      expect(testGame.gameOver()).to.equal(false);
       testBoard.find(0,1).markedBy(testPlayer);
-      expect(testBoard.winner()).to.equal(testPlayer);
+      expect(testGame.gameOver()).to.equal(testPlayer);
     });
 
     it('returns true when there are three diagonal \
         spaces marked by the same player', function() {
-      var testBoard = new Board();
-      var testPlayer = createXPlayer();
-      testBoard.players.push(testPlayer);
+      var testGame = new Game();
+      var testBoard = testGame.board;
+      var testPlayer = testGame.players[0];
       testBoard.find(0,0).markedBy(testPlayer);
       testBoard.find(1,1).markedBy(testPlayer);
       testBoard.find(2,2).markedBy(testPlayer);
-      expect(testBoard.winner()).to.equal(testPlayer);
+      expect(testGame.gameOver()).to.equal(testPlayer);
     });
   });
 });

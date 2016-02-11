@@ -1,43 +1,14 @@
-function Board() {
-  this.spaces = this.generateBoard();
-  this.players = [];
+function Game () {
+  this.board = new Board();
+  this.players = [new Player("X"), new Player("O")];
 }
 
-Board.prototype.forEachSpace = function (callback) {
-  for (var x = 0; x < 3; x++) {
-    for (var y = 0; y < 3; y++) {
-      callback(x, y);
-    }
-  }
-};
-
-Board.prototype.generateBoard = function () {
-  var spaces = []
-  this.forEachSpace(function(x, y) {
-    spaces.push(new Space(x, y));
-  })
-  return spaces;
-};
-
-Board.prototype.find = function (xCoordinate, yCoordinate) {
-  // for each space in spaces,
-  // check if that space's coordinates match the test coordinates
-  // if so, return that space
-
-  var spaces = this.spaces;
-  for (var i = 0; i < spaces.length; i++) {
-    var space = spaces[i]
-    if (space.xCoordinate === xCoordinate && space.yCoordinate === yCoordinate) {
-      return space;
-    }
-  }
-};
-
-Board.prototype.winner = function () {
+Game.prototype.gameOver = function () {
   var players = this.players;
+  var board = this.board;
   for (var i = 0; i < players.length; i++) {
     var player = players[i];
-    var playerSpaces = this.spacesMarkedBy(player);
+    var playerSpaces = board.spacesMarkedBy(player);
     // if any win conditions are met, return that player
     if (winConditionIsMet(playerSpaces)) {return player;}
   }
@@ -110,6 +81,40 @@ var threeInDiagonal = function(playerSpaces) {
   }
 }
 
+function Board() {
+  this.spaces = this.generateBoard();
+}
+
+Board.prototype.forEachSpace = function (callback) {
+  for (var x = 0; x < 3; x++) {
+    for (var y = 0; y < 3; y++) {
+      callback(x, y);
+    }
+  }
+};
+
+Board.prototype.generateBoard = function () {
+  var spaces = []
+  this.forEachSpace(function(x, y) {
+    spaces.push(new Space(x, y));
+  })
+  return spaces;
+};
+
+Board.prototype.find = function (xCoordinate, yCoordinate) {
+  // for each space in spaces,
+  // check if that space's coordinates match the test coordinates
+  // if so, return that space
+
+  var spaces = this.spaces;
+  for (var i = 0; i < spaces.length; i++) {
+    var space = spaces[i]
+    if (space.xCoordinate === xCoordinate && space.yCoordinate === yCoordinate) {
+      return space;
+    }
+  }
+};
+
 Board.prototype.spacesMarkedBy = function (player) {
   var markedSpaces = [];
   var spaces = this.spaces;
@@ -139,3 +144,62 @@ Space.prototype.markedBy = function(player) {
   }
   return this.markedBy;
 };
+
+var toggleCurrentPlayer = function(currentPlayerNumber) {
+  if (currentPlayerNumber === 0) {
+    return 1;
+  } else {
+    return 0;
+  }
+};
+
+$(function() {
+  game = new Game();
+  players = game.players;
+  board = game.board;
+  spaces = board.spaces;
+
+  // Generate Game Board
+  $gameBoard = $('#game-board');
+  spaces.forEach(function(space) {
+    $gameBoard.append('<div class="unmarked space" id="' + space.coordinates + '"></div>')
+  });
+
+  // Start Game
+  var currentPlayerNumber = 0;
+  var currentPlayer = players[currentPlayerNumber];
+  var playCount = 0;
+
+  // When a space is clicked
+  $('.unmarked').click(function() {
+    // Make space unclickable in the future
+    $(this).removeClass('unmarked');
+    $(this).unbind('click');
+
+    // Get id of the space that was clicked
+    spaceID = this.id.split(',')
+    for(var i = 0; i < spaceID.length; i++) { spaceID[i] = parseInt(spaceID[i]); }
+
+    // Mark that space as clicked by the current player
+    board.find(spaceID[0], spaceID[1]).markedBy(currentPlayer);
+    $(this).text(currentPlayer.mark)
+
+    // Determine if it's GameOver and report winner if so
+    if (game.gameOver()) {
+      $gameBoard.fadeTo('slow', 0.7);
+      $('#game-status').append('<h1>' + currentPlayer.mark + ' Won!</h1>');
+      $('.unmarked').unbind('click');
+      $('.unmarked').removeClass('unmarked');
+    } else if (playCount === 8) {
+      $gameBoard.fadeTo('slow', 0.7);
+      $('#game-status').append("<h1>Game Over. It's a tie!</h1>");
+      $('.unmarked').unbind('click');
+      $('.unmarked').removeClass('unmarked');
+    }
+
+    // Toggle the current player and playcount
+    currentPlayerNumber = toggleCurrentPlayer(currentPlayerNumber);
+    currentPlayer = players[currentPlayerNumber];
+    playCount += 1;
+  });
+});
