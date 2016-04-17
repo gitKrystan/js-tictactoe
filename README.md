@@ -10,6 +10,8 @@ Working from the other team's code on Day 2, we had to add an AI opponent. This 
 
 This repo shows our Day 1 code. To see what Kyle did with our code on Day 2, visit his repo [here](https://github.com/Vawx/tictactoe_pair_js.git).
 
+Testing with Mocha/Chai.
+
 ## Setup
 
 Install by cloning this repository.
